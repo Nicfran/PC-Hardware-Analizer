@@ -356,12 +356,38 @@ st.plotly_chart(fig_radar, use_container_width=True)
 # ── Cuellos de botella ────────────────────────────────────────────────────────
 st.markdown("<div class='section-title'>Detección de cuellos de botella (ML)</div>", unsafe_allow_html=True)
 
-bn_type_map = {
-    "critical": ("bn-critical", "bn-tag-critical", "⛔ CUELLO DE BOTELLA CRÍTICO"),
-    "warning":  ("bn-warning",  "bn-tag-warning",  "⚠️ ATENCIÓN"),
-    "good":     ("bn-good",     "bn-tag-good",     "✅ SIN PROBLEMA"),
-    "info":     ("bn-info",     "bn-tag-info",     "ℹ️ DATO IMPORTANTE"),
+.bn-critical, .bn-warning, .bn-good, .bn-info {
+    border-radius: 12px;
+    padding: 1.5rem; /* Más espacio interno */
+    margin-bottom: 1.5rem; /* Separación real entre tarjetas */
+    border-left: 5px solid transparent; /* Indicador lateral grueso */
+    background: rgba(26, 29, 46, 0.4) !important; /* Fondo traslúcido */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
 }
+
+.bn-critical:hover, .bn-warning:hover, .bn-good:hover, .bn-info:hover {
+    transform: translateX(5px); /* Pequeña animación al pasar el mouse */
+}
+
+/* Colores Dinámicos con Brillo Neón */
+.bn-critical { border-left-color: #ff003c; box-shadow: inset 0 0 15px rgba(255, 0, 60, 0.05); }
+.bn-warning  { border-left-color: #ffaa00; box-shadow: inset 0 0 15px rgba(255, 170, 0, 0.05); }
+.bn-good     { border-left-color: #00ff66; box-shadow: inset 0 0 15px rgba(0, 255, 102, 0.05); }
+.bn-info     { border-left-color: #00f0ff; box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05); }
+
+/* Tipografía de las Alertas */
+.bn-tag-critical { color: #ff003c; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.bn-tag-warning  { color: #ffaa00; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.bn-tag-good     { color: #00ff66; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+.bn-tag-info     { color: #00f0ff; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+
+.bn-title { font-size: 1.1rem; font-weight: 600; color: #ffffff; margin-bottom: 6px; }
+.bn-desc  { font-size: 0.85rem; color: #8b949e; line-height: 1.6; }
 
 for bn in analysis["bottlenecks"]:
     btype = bn.get("type", "info")
