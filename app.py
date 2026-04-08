@@ -243,7 +243,7 @@ radar_vals = [
     analysis["scores"].get("ram", 0) / 9.9 * 100,
     analysis["scores"].get("gpu", 0) / 9.9 * 100,
     analysis["scores"].get("disk", 0) / 9.9 * 100,
-    analysis["scores"].get("disk2", 1.0) / 9.9 * 100,
+    analysis["scores"].get("disk2", 1.0) / 9.9 * 100,]
 
 # ── HERO: Score general ───────────────────────────────────────────────────────
 tier_colors = {
