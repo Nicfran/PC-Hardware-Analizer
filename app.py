@@ -22,121 +22,324 @@ st.set_page_config(
 # ── CSS ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-
-.main { background: #0f1117; }
-.block-container { padding: 2rem 2rem 4rem; max-width: 1100px; }
-
-.hero-card {
-    background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 100%);
-    border: 1px solid #2a2d3e;
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 1.5rem;
+:root {
+    --neon-cyan: #00D4FF;
+    --neon-magenta: #FF00D4;
+    --neon-green: #00FF88;
+    --neon-orange: #FFAA00;
+    --dark-bg: #0A0A0A;
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(0,212,255,0.2);
 }
 
+html, body, [class*="css"] { 
+    font-family: 'Inter', sans-serif; 
+    background: var(--dark-bg) !important;
+}
+
+.main { 
+    background: linear-gradient(-45deg, var(--dark-bg), #1A1A2E, #16213E, #0F0F23);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* HEADER HERO CYBERPUNK */
+.hero-title {
+    font-family: 'Orbitron', monospace !important;
+    font-size: 3.5rem !important;
+    font-weight: 900 !important;
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta), var(--neon-green), var(--neon-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 300% 300%;
+    animation: neonFlow 3s ease-in-out infinite, glowPulse 2s ease-in-out infinite alternate;
+    text-shadow: 0 0 30px rgba(0,212,255,0.6);
+    line-height: 1.1;
+}
+
+@keyframes neonFlow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes glowPulse {
+    from { filter: drop-shadow(0 0 10px rgba(0,212,255,0.5)); }
+    to { filter: drop-shadow(0 0 25px rgba(0,212,255,0.8)); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* GLASSMORPHISM CARDS */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(25px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.1), transparent);
+    transition: left 0.6s;
+}
+
+.glass-card:hover::before {
+    left: 100%;
+}
+
+.glass-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+        0 25px 50px rgba(0,212,255,0.15),
+        0 0 0 1px rgba(0,212,255,0.3);
+    border-color: var(--neon-cyan);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* SCORE RING ANIMADO 3D */
 .score-ring {
+    position: relative;
     text-align: center;
-    padding: 1rem;
+    padding: 2rem;
+}
+
+.score-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: conic-gradient(var(--neon-cyan) 0deg 270deg, #1A1A2E 270deg 360deg);
+    position: relative;
+    margin: 0 auto 1rem;
+    animation: scoreRotate 4s linear infinite;
+}
+
+@keyframes scoreRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.score-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: var(--dark-bg);
+    border-radius: 50%;
+    border: 3px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .score-big {
-    font-size: 4rem;
-    font-weight: 600;
-    background: linear-gradient(135deg, #4f8ef7, #a78bfa);
+    font-family: 'Orbitron', monospace;
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    line-height: 1;
+    text-shadow: 0 0 20px rgba(0,212,255,0.8);
 }
 
-.score-label { color: #6b7280; font-size: 0.85rem; margin-top: 4px; }
-
-.tier-badge {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 20px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    margin-top: 8px;
-}
-
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* COMPONENT CARDS NEON */
 .comp-card {
-    background: #1a1d2e;
-    border: 1px solid #2a2d3e;
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-bottom: 0.8rem;
-    transition: border-color 0.2s;
-}
-.comp-card:hover { border-color: #4f8ef7; }
-
-.comp-label { font-size: 0.72rem; color: #6b7280; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
-.comp-name { font-size: 1rem; font-weight: 500; color: #e5e7eb; }
-.comp-detail { font-size: 0.8rem; color: #9ca3af; margin: 4px 0 10px; }
-
-.metric-val { font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; color: #a78bfa; }
-
-.bn-critical { background: #1f1011; border: 1px solid #7f1d1d; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-.bn-warning  { background: #1c1708; border: 1px solid #78350f; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-.bn-good     { background: #0a1f0e; border: 1px solid #14532d; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-.bn-info     { background: #0c1a2e; border: 1px solid #1e3a5f; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-
-.bn-tag-critical { color: #f87171; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-.bn-tag-warning  { color: #fbbf24; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-.bn-tag-good     { color: #4ade80; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-.bn-tag-info     { color: #60a5fa; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-
-.bn-title { font-size: 0.95rem; font-weight: 500; color: #e5e7eb; margin: 2px 0; }
-.bn-desc  { font-size: 0.82rem; color: #9ca3af; margin-top: 4px; line-height: 1.55; }
-
-.fps-card {
-    background: #1a1d2e;
-    border: 1px solid #2a2d3e;
-    border-radius: 10px;
-    padding: 1rem;
-    text-align: center;
-}
-.fps-game { font-size: 0.8rem; color: #9ca3af; margin-bottom: 4px; }
-.fps-val  { font-size: 1.6rem; font-weight: 600; }
-.fps-res  { font-size: 0.75rem; color: #6b7280; margin-top: 2px; }
-
-.section-title {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #e5e7eb;
-    margin: 1.8rem 0 0.8rem;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #2a2d3e;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.upload-area {
-    border: 2px dashed #2a2d3e;
-    border-radius: 16px;
-    padding: 3rem 2rem;
-    text-align: center;
-    background: #0f1117;
+.comp-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1));
+    transition: width 0.6s;
 }
 
-.stButton > button {
-    background: linear-gradient(135deg, #4f8ef7, #7c3aed);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1.5rem;
-    font-weight: 500;
+.comp-card:hover::after {
     width: 100%;
 }
 
-.info-note {
-    background: #0c1a2e;
-    border-left: 3px solid #4f8ef7;
-    border-radius: 0 8px 8px 0;
-    padding: 0.8rem 1rem;
-    font-size: 0.82rem;
-    color: #9ca3af;
-    margin: 0.8rem 0;
+.comp-label {
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.comp-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.3rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* PROGRESS BARS ANIMADAS */
+.progress-container {
+    background: rgba(26,26,46,0.8);
+    border-radius: 12px;
+    height: 10px;
+    overflow: hidden;
+    margin: 1rem 0;
+    position: relative;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green));
+    border-radius: 12px;
+    transition: width 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* BOTTLENECK ALERTS NEON */
+.bn-neon {
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.bn-neon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+}
+
+.bn-critical { 
+    background: rgba(127,29,29,0.2); 
+    border: 1px solid rgba(247,113,113,0.5);
+    box-shadow: 0 0 20px rgba(247,113,113,0.3);
+}
+.bn-warning { 
+    background: rgba(120,53,15,0.2); 
+    border: 1px solid rgba(251,191,36,0.5);
+    box-shadow: 0 0 20px rgba(251,191,36,0.3);
+}
+.bn-good { 
+    background: rgba(20,83,45,0.2); 
+    border: 1px solid rgba(74,222,128,0.5);
+    box-shadow: 0 0 20px rgba(74,222,128,0.3);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* FPS CARDS HOLOGRÁFICAS */
+.fps-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.fps-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 40px rgba(0,212,255,0.2);
+}
+
+.fps-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.2rem !important;
+    font-weight: 900 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* BOTONES NEON */
+.stButton > button {
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-magenta));
+    border: none;
+    border-radius: 16px;
+    padding: 1rem 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,212,255,0.3);
+}
+
+.stButton > button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0,212,255,0.5);
+}
+
+.stButton > button:active {
+    transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* PLOTLY DARK MODE PERFECTO */
+.plotly-graph-div {
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════ */
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.5rem !important; }
+    .score-big { font-size: 2.5rem !important; }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -152,9 +355,12 @@ def load_engines():
 db, ml, fps_predictor = load_engines()
 
 # ── UI ───────────────────────────────────────────────────────────────────────
-st.markdown("## 🖥️ PC Hardware Analyzer")
-st.markdown("<p style='color:#6b7280;margin-top:-8px;margin-bottom:1.5rem;'>Subí tu archivo WinSAT XML — análisis automático con Machine Learning</p>", unsafe_allow_html=True)
-
+st.set_page_config(
+    page_title="PC Analyzer — WinSAT ML",
+    page_icon="🖥️",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
 # ── Sidebar: CPU/GPU manual ───────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### Especificar componentes")
@@ -236,17 +442,25 @@ tier_icon, tier_bg, tier_color = tier_colors.get(tier, ("⚪", "#1f2937", "#9ca3
 
 col_score, col_info = st.columns([1, 2])
 with col_score:
-    overall = analysis["overall_score"]
-    percentile = analysis["global_percentile"]
     st.markdown(f"""
-    <div style='background:#1a1d2e;border:1px solid #2a2d3e;border-radius:16px;padding:1.5rem;text-align:center;'>
-        <div style='font-size:0.75rem;color:#6b7280;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;'>Puntaje General</div>
-        <div class='score-big'>{overall:.1f}</div>
-        <div class='score-label'>de 9.9 máximo</div>
-        <div style='display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.78rem;font-weight:500;margin-top:10px;background:{tier_bg};color:{tier_color};'>
-            {tier_icon} Gama {tier}
+    <div class='glass-card score-ring'>
+        <div class='score-circle'>
+            <div class='score-inner'>
+                <div class='score-big'>{overall:.1f}</div>
+                <div style='font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-top: 0.3rem;'>
+                    TOP {percentile}%
+                </div>
+            </div>
         </div>
-        <div style='margin-top:12px;font-size:0.85rem;color:#9ca3af;'>Top <b style="color:#e5e7eb;">{percentile}%</b> global</div>
+        <div class='tier-badge' style='
+            background: rgba(0,212,255,0.2);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        '>{tier_icon} Gama {tier}</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -378,14 +592,14 @@ for row_start in range(0, len(game_list), games_per_row):
         setting   = info["setting"]
         color     = fps_color_map(fps_val)
         with col:
-            st.markdown(f"""
-            <div class='fps-card'>
-                <div class='fps-game'>{game}</div>
-                <div class='fps-val' style='color:{color};'>{fps_val}</div>
-                <div class='fps-res'>FPS · {setting}</div>
-                <div style='font-size:0.7rem;color:#6b7280;margin-top:2px;'>1% low: {fps_low}</div>
-            </div>
-            """, unsafe_allow_html=True)
+        color = fps_color_map(fps_val)
+        st.markdown(f"""
+        <div class='glass-card fps-card'>
+        <div class='fps-game' style='color: rgba(255,255,255,0.6);'>{game}</div>
+        <div class='fps-val' style='color: {color}; text-shadow: 0 0 15px {color};'>{fps_val} FPS</div>
+        <div class='fps-res'>{setting} • 1% low: {fps_low}</div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ── Benchmark bar chart ───────────────────────────────────────────────────────
 st.markdown("<div class='section-title'>Comparativa vs configuraciones populares</div>", unsafe_allow_html=True)
