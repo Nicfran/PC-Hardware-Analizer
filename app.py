@@ -590,8 +590,8 @@ for row_start in range(0, len(game_list), games_per_row):
         fps_val   = info["fps"]
         fps_low   = info["fps_low"]
         setting   = info["setting"]
-        color     = fps_color_map(fps_val)
-        with col:
+        color   = fps_color_map(fps_val)
+    with col:
         color = fps_color_map(fps_val)
         st.markdown(f"""
         <div class='glass-card fps-card'>
