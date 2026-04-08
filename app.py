@@ -247,26 +247,34 @@ radar_vals = [
 
 # ── HERO: Score general ───────────────────────────────────────────────────────
 tier_colors = {
-    "Entrada":    ("🔵", "#1e3a5f", "#60a5fa"),
-    "Media":      ("🟢", "#14532d", "#4ade80"),
-    "Media-Alta": ("🟡", "#78350f", "#fbbf24"),
-    "Alta":       ("🟠", "#7c2d12", "#fb923c"),
-    "Entusiasta": ("🔴", "#4c1d95", "#a78bfa"),
+    "Entrada":    ("🔵", "rgba(30, 58, 95, 0.3)", "#60a5fa"),
+    "Media":      ("🟢", "rgba(20, 83, 45, 0.3)", "#4ade80"),
+    "Media-Alta": ("🟡", "rgba(120, 53, 15, 0.3)", "#fbbf24"),
+    "Alta":       ("🟠", "rgba(124, 45, 18, 0.3)", "#fb923c"),
+    "Entusiasta": ("🔴", "rgba(76, 29, 149, 0.3)", "#a78bfa"),
 }
 tier = analysis["tier"]
-tier_icon, tier_bg, tier_color = tier_colors.get(tier, ("⚪", "#1f2937", "#9ca3af"))
+tier_icon, tier_bg, tier_color = tier_colors.get(tier, ("⚪", "rgba(31, 41, 55, 0.3)", "#9ca3af"))
 
 col_score, col_info = st.columns([1, 2])
 with col_score:
     overall = analysis["overall_score"]
+    percentile = analysis["global_percentile"]
     st.markdown(f"""
     <div class='hero-card' style='text-align:center;'>
         <div class='score-label'>Puntaje General</div>
         <div class='score-big'>{overall:.1f}</div>
-        <div class='score-label'>Gama {analysis['tier']}</div>
+        <div class='score-label' style='margin-bottom:10px;'>de 9.9 máximo</div>
+        <div style='display:inline-block; padding:6px 16px; border-radius:4px; font-size:0.8rem; font-weight:600; 
+                    background:{tier_bg} !important; color:{tier_color}; border: 1px solid {tier_color}; 
+                    box-shadow: inset 0 0 10px {tier_bg}, 0 0 15px {tier_bg}; text-transform: uppercase; letter-spacing:0.1em;'>
+            {tier_icon} Gama {tier}
+        </div>
+        <div style='margin-top:15px; font-size:0.8rem; color:#8b949e;'>
+            Top <b style="color:#00f0ff; font-family:var(--font-mono);">{percentile}%</b> global
+        </div>
     </div>
     """, unsafe_allow_html=True)
-
 with col_info:
     st.markdown(f"""
     <div class='hero-card' style='height:100%;'>
