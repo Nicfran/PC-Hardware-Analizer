@@ -22,121 +22,154 @@ st.set_page_config(
 # ── CSS ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-.main { background: #0f1117; }
+/* Fondo principal: gradiente radial oscuro tipo telemetría/espacio */
+.main {
+    background: radial-gradient(circle at 50% 0%, #151a2e 0%, #06080d 100%);
+}
 .block-container { padding: 2rem 2rem 4rem; max-width: 1100px; }
 
-.hero-card {
-    background: linear-gradient(135deg, #1a1d2e 0%, #0f1117 100%);
-    border: 1px solid #2a2d3e;
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 1.5rem;
+/* Efecto Glassmorphism y bordes de alta tecnología para todas las tarjetas */
+.hero-card, .comp-card, .fps-card, .info-note, [class^="bn-"] {
+    background: rgba(15, 17, 26, 0.4) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
 }
 
-.score-ring {
-    text-align: center;
-    padding: 1rem;
-}
+.hero-card { border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+.score-ring { text-align: center; padding: 1rem; }
 
+/* Puntaje General: Texto con brillo (Glow effect) */
 .score-big {
-    font-size: 4rem;
-    font-weight: 600;
-    background: linear-gradient(135deg, #4f8ef7, #a78bfa);
+    font-size: 4.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #00f0ff, #7c3aed);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1;
+    text-shadow: 0px 0px 20px rgba(0, 240, 255, 0.3);
+    font-family: 'JetBrains Mono', monospace;
 }
 
-.score-label { color: #6b7280; font-size: 0.85rem; margin-top: 4px; }
+.score-label { color: #8b949e; font-size: 0.85rem; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.15em; }
 
+/* Badges de Tier transparentes y con brillo interior */
 .tier-badge {
     display: inline-block;
-    padding: 4px 14px;
-    border-radius: 20px;
+    padding: 6px 18px;
+    border-radius: 4px;
     font-size: 0.78rem;
-    font-weight: 500;
+    font-weight: 600;
     margin-top: 8px;
+    letter-spacing: 0.05em;
+    border: 1px solid currentColor;
+    background: transparent !important;
+    box-shadow: inset 0 0 10px currentColor, 0 0 10px rgba(0,0,0,0.5);
 }
 
-.comp-card {
-    background: #1a1d2e;
-    border: 1px solid #2a2d3e;
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-bottom: 0.8rem;
-    transition: border-color 0.2s;
+/* Tarjetas de componentes interactivas */
+.comp-card { border-radius: 8px; padding: 1.2rem; margin-bottom: 0.8rem; border-left: 2px solid transparent; }
+.comp-card:hover {
+    border-color: rgba(0, 240, 255, 0.5);
+    border-left: 2px solid #00f0ff;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+    transform: translateY(-2px);
 }
-.comp-card:hover { border-color: #4f8ef7; }
 
-.comp-label { font-size: 0.72rem; color: #6b7280; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
-.comp-name { font-size: 1rem; font-weight: 500; color: #e5e7eb; }
-.comp-detail { font-size: 0.8rem; color: #9ca3af; margin: 4px 0 10px; }
+.comp-label { font-size: 0.7rem; color: #00f0ff; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; font-weight: 600;}
+.comp-name { font-size: 1.05rem; font-weight: 500; color: #ffffff; }
+.comp-detail { font-size: 0.8rem; color: #8b949e; margin: 4px 0 10px; }
+.metric-val { font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; color: #c4b5fd; }
 
-.metric-val { font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; color: #a78bfa; }
+/* Cuellos de botella - Estilo terminal de alertas */
+.bn-critical { border-left: 4px solid #ff003c !important; }
+.bn-warning  { border-left: 4px solid #ffaa00 !important; }
+.bn-good     { border-left: 4px solid #00ff66 !important; }
+.bn-info     { border-left: 4px solid #00f0ff !important; }
 
-.bn-critical { background: #1f1011; border: 1px solid #7f1d1d; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-.bn-warning  { background: #1c1708; border: 1px solid #78350f; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-.bn-good     { background: #0a1f0e; border: 1px solid #14532d; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
-.bn-info     { background: #0c1a2e; border: 1px solid #1e3a5f; border-radius: 10px; padding: 1rem; margin-bottom: 0.6rem; }
+.bn-tag-critical { color: #ff003c; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-shadow: 0 0 8px rgba(255,0,60,0.4); text-transform: uppercase; }
+.bn-tag-warning  { color: #ffaa00; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-shadow: 0 0 8px rgba(255,170,0,0.4); text-transform: uppercase; }
+.bn-tag-good     { color: #00ff66; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-shadow: 0 0 8px rgba(0,255,102,0.4); text-transform: uppercase; }
+.bn-tag-info     { color: #00f0ff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-shadow: 0 0 8px rgba(0,240,255,0.4); text-transform: uppercase; }
 
-.bn-tag-critical { color: #f87171; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-.bn-tag-warning  { color: #fbbf24; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-.bn-tag-good     { color: #4ade80; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
-.bn-tag-info     { color: #60a5fa; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; }
+.bn-title { font-size: 0.95rem; font-weight: 500; color: #ffffff; margin: 6px 0 4px; }
+.bn-desc  { font-size: 0.82rem; color: #8b949e; margin-top: 4px; line-height: 1.55; }
 
-.bn-title { font-size: 0.95rem; font-weight: 500; color: #e5e7eb; margin: 2px 0; }
-.bn-desc  { font-size: 0.82rem; color: #9ca3af; margin-top: 4px; line-height: 1.55; }
+/* FPS Cards - Display digital */
+.fps-card { border-radius: 8px; padding: 1.2rem; text-align: center; }
+.fps-card:hover { border-color: #7c3aed; box-shadow: 0 0 15px rgba(124, 58, 237, 0.2); transform: scale(1.02); }
+.fps-game { font-size: 0.8rem; color: #8b949e; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.fps-val  { font-size: 1.9rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 12px currentColor; }
+.fps-res  { font-size: 0.75rem; color: #6b7280; margin-top: 6px; letter-spacing: 0.05em; }
 
-.fps-card {
-    background: #1a1d2e;
-    border: 1px solid #2a2d3e;
-    border-radius: 10px;
-    padding: 1rem;
-    text-align: center;
-}
-.fps-game { font-size: 0.8rem; color: #9ca3af; margin-bottom: 4px; }
-.fps-val  { font-size: 1.6rem; font-weight: 600; }
-.fps-res  { font-size: 0.75rem; color: #6b7280; margin-top: 2px; }
-
+/* Títulos de sección con línea de energía neón */
 .section-title {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #e5e7eb;
-    margin: 1.8rem 0 0.8rem;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #2a2d3e;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 2.8rem 0 1.2rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 80px;
+    height: 2px;
+    background: #00f0ff;
+    box-shadow: 0 0 10px #00f0ff;
 }
 
+/* Área de subida de archivo tipo escaner */
 .upload-area {
-    border: 2px dashed #2a2d3e;
-    border-radius: 16px;
+    border: 2px dashed rgba(0, 240, 255, 0.3);
+    border-radius: 8px;
     padding: 3rem 2rem;
     text-align: center;
-    background: #0f1117;
+    background: rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
+.upload-area:hover { border-color: #00f0ff; background: rgba(0, 240, 255, 0.03); }
 
+/* Botón holográfico */
 .stButton > button {
-    background: linear-gradient(135deg, #4f8ef7, #7c3aed);
-    color: white;
-    border: none;
-    border-radius: 8px;
+    background: transparent;
+    color: #00f0ff;
+    border: 1px solid #00f0ff;
+    border-radius: 4px;
     padding: 0.6rem 1.5rem;
-    font-weight: 500;
+    font-weight: 600;
     width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05);
+}
+.stButton > button:hover {
+    background: rgba(0, 240, 255, 0.1);
+    box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.2), 0 0 15px rgba(0, 240, 255, 0.2);
+    color: #fff;
+    border-color: #fff;
 }
 
 .info-note {
-    background: #0c1a2e;
-    border-left: 3px solid #4f8ef7;
-    border-radius: 0 8px 8px 0;
-    padding: 0.8rem 1rem;
-    font-size: 0.82rem;
-    color: #9ca3af;
-    margin: 0.8rem 0;
+    border-left: 4px solid #7c3aed !important;
+    border-radius: 4px;
+    padding: 1rem;
+    font-size: 0.85rem;
+    color: #c9d1d9;
+    margin: 1rem 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -270,10 +303,10 @@ with col_info:
 st.markdown("<div class='section-title'>Puntaje por componente</div>", unsafe_allow_html=True)
 
 components = [
-    ("PROCESADOR (CPU)",       analysis.get("cpu_display","CPU"),       analysis.get("cpu_detail",""),  analysis["scores"]["cpu"],  "#4f8ef7"),
-    ("TARJETA DE VIDEO (GPU)", analysis.get("gpu_display","GPU"),       analysis.get("gpu_detail",""),  analysis["scores"]["gpu"],  "#4ade80"),
-    ("MEMORIA RAM",            analysis.get("ram_display","RAM"),       analysis.get("ram_detail",""),  analysis["scores"]["ram"],  "#a78bfa"),
-    ("DISCO PRINCIPAL",        analysis.get("disk_display","Disco"),    analysis.get("disk_detail",""), analysis["scores"]["disk"], "#fbbf24"),
+    ("PROCESADOR (CPU)",       analysis.get("cpu_display","CPU"),       analysis.get("cpu_detail",""),  analysis["scores"]["cpu"],  "#00f0ff"), # Cian Neón
+    ("TARJETA DE VIDEO (GPU)", analysis.get("gpu_display","GPU"),       analysis.get("gpu_detail",""),  analysis["scores"]["gpu"],  "#7c3aed"), # Violeta Eléctrico
+    ("MEMORIA RAM",            analysis.get("ram_display","RAM"),       analysis.get("ram_detail",""),  analysis["scores"]["ram"],  "#ffaa00"), # Naranja Técnico
+    ("DISCO PRINCIPAL",        analysis.get("disk_display","Disco"),    analysis.get("disk_detail",""), analysis["scores"]["disk"], "#00ff66"), # Verde Neón
 ]
 
 cols = st.columns(2)
@@ -296,44 +329,32 @@ for i, (label, name, detail, score, color) in enumerate(components):
         """, unsafe_allow_html=True)
 
 # ── Radar chart ───────────────────────────────────────────────────────────────
-st.markdown("<div class='section-title'>Radar de rendimiento</div>", unsafe_allow_html=True)
-
-radar_labels = ["CPU (multi-core)", "CPU (single-core)", "RAM", "GPU", "Disco NVMe", "Disco secundario"]
-radar_vals   = [
-    analysis["scores"]["cpu"] / 9.9 * 100,
-    analysis["scores"]["cpu_single"] / 9.9 * 100,
-    analysis["scores"]["ram"] / 9.9 * 100,
-    analysis["scores"]["gpu"] / 9.9 * 100,
-    analysis["scores"]["disk"] / 9.9 * 100,
-    analysis["scores"].get("disk2", 1.0) / 9.9 * 100,
-]
-
 fig_radar = go.Figure()
 fig_radar.add_trace(go.Scatterpolar(
     r=radar_vals + [radar_vals[0]],
     theta=radar_labels + [radar_labels[0]],
     fill='toself',
-    fillcolor='rgba(79,142,247,0.15)',
-    line=dict(color='#4f8ef7', width=2),
+    fillcolor='rgba(0, 240, 255, 0.15)',
+    line=dict(color='#00f0ff', width=2),
     name='Tu PC',
-    marker=dict(size=6, color='#4f8ef7')
+    marker=dict(size=6, color='#00f0ff')
 ))
 fig_radar.add_trace(go.Scatterpolar(
     r=[100]*len(radar_labels) + [100],
     theta=radar_labels + [radar_labels[0]],
     fill='toself',
-    fillcolor='rgba(75,85,99,0.05)',
-    line=dict(color='#374151', width=1, dash='dot'),
+    fillcolor='rgba(124, 58, 237, 0.05)',
+    line=dict(color='#7c3aed', width=1, dash='dot'),
     name='Top global'
 ))
 fig_radar.update_layout(
     polar=dict(
-        bgcolor='#1a1d2e',
-        radialaxis=dict(visible=True, range=[0,100], gridcolor='#2a2d3e', tickfont=dict(size=10, color='#6b7280'), ticksuffix=''),
-        angularaxis=dict(gridcolor='#2a2d3e', tickfont=dict(size=11, color='#9ca3af'))
+        bgcolor='rgba(0,0,0,0)',
+        radialaxis=dict(visible=True, range=[0,100], gridcolor='rgba(255,255,255,0.1)', tickfont=dict(size=10, color='#8b949e', family='JetBrains Mono'), ticksuffix=''),
+        angularaxis=dict(gridcolor='rgba(255,255,255,0.1)', tickfont=dict(size=11, color='#c9d1d9'))
     ),
     showlegend=True,
-    legend=dict(font=dict(color='#9ca3af'), bgcolor='rgba(0,0,0,0)'),
+    legend=dict(font=dict(color='#c9d1d9'), bgcolor='rgba(0,0,0,0)'),
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)',
     height=380,
@@ -393,7 +414,7 @@ st.markdown("<div class='section-title'>Comparativa vs configuraciones populares
 comparison = db.get_comparison_configs(analysis)
 cfg_names  = [c["name"] for c in comparison]
 cfg_scores = [c["score"] for c in comparison]
-cfg_colors = ["#4f8ef7" if c.get("is_user") else "#374151" for c in comparison]
+cfg_colors = ["#00f0ff" if c.get("is_user") else "rgba(255,255,255,0.1)" for c in comparison]
 
 fig_bar = go.Figure(go.Bar(
     x=cfg_scores,
@@ -402,13 +423,13 @@ fig_bar = go.Figure(go.Bar(
     marker_color=cfg_colors,
     text=[f"{s:.1f}" for s in cfg_scores],
     textposition='outside',
-    textfont=dict(color='#9ca3af', size=11)
+    textfont=dict(color='#00f0ff', size=12, family='JetBrains Mono')
 ))
 fig_bar.update_layout(
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)',
-    xaxis=dict(range=[0, 10], gridcolor='#2a2d3e', tickfont=dict(color='#6b7280')),
-    yaxis=dict(tickfont=dict(color='#e5e7eb', size=11)),
+    xaxis=dict(range=[0, 10], gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#8b949e', family='JetBrains Mono')),
+    yaxis=dict(tickfont=dict(color='#c9d1d9', size=11)),
     height=300,
     margin=dict(l=0, r=60, t=10, b=10),
     showlegend=False
