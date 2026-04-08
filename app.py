@@ -455,5 +455,5 @@ if uploaded is None:
         </div>
         """, unsafe_allow_html=True)
     with col2:
-        st.markdown("""
+        st.markdown("")
        
