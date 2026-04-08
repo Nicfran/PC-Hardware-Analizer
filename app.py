@@ -357,7 +357,7 @@ st.plotly_chart(fig_radar, use_container_width=True)
 st.markdown("<div class='section-title'>Detección de cuellos de botella (ML)</div>", unsafe_allow_html=True)
 
 .bn-critical, .bn-warning, .bn-good, .bn-info {
-    border-radius: 12px;
+    border-radius: 12px,
     padding: 1.5rem; /* Más espacio interno */
     margin-bottom: 1.5rem; /* Separación real entre tarjetas */
     border-left: 5px solid transparent; /* Indicador lateral grueso */
