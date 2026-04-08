@@ -191,30 +191,16 @@ st.markdown("<p style='color:#6b7280;margin-top:-8px;margin-bottom:1.5rem;'>Sub�
 # ── Sidebar: CPU/GPU manual ───────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### Especificar componentes")
-    st.markdown("<p style='font-size:0.82rem;color:#9ca3af;'>Opcional — mejora la precisión del análisis</p>", unsafe_allow_html=True)
     cpu_manual = st.selectbox("Procesador (CPU)", ["— Autodetectar —"] + db.get_cpu_list())
     gpu_manual = st.selectbox("Tarjeta de video (GPU)", ["— Autodetectar —"] + db.get_gpu_list())
     uso = st.selectbox("Uso principal", ["Gaming", "Trabajo / Oficina", "Diseño / Edición", "Streaming", "General"])
     resolucion = st.selectbox("Resolución de juego", ["1080p", "1440p", "4K"])
-    st.markdown("---")
-    st.markdown("<p style='font-size:0.75rem;color:#4b5563;'>Cómo obtener el archivo WinSAT:</p>", unsafe_allow_html=True)
-    st.code("winsat formal", language="bash")
-    st.markdown("<p style='font-size:0.75rem;color:#4b5563;'>Archivo en:<br>%windir%\\Performance\\WinSAT\\DataStore\\</p>", unsafe_allow_html=True)
 
-# ── Upload ────────────────────────────────────────────────────────────────────
-uploaded = st.file_uploader(
-    "Arrastrá tu archivo WinSAT XML acá",
-    type=["xml"],
-    help="Archivo generado por 'winsat formal' en Windows"
-)
+uploaded = st.file_uploader("Arrastrá tu archivo WinSAT XML acá", type=["xml"])
 
 if uploaded is None:
-    st.markdown("""
-    <div class='info-note'>
-    📌 <b>Cómo obtener el archivo:</b> Abrí PowerShell como administrador → escribí <code>winsat formal</code> → esperá que termine (5-10 min) → buscá el XML en <code>C:\\Windows\\Performance\\WinSAT\\DataStore\\</code>
-    </div>
-    """, unsafe_allow_html=True)
-
+    st.markdown("<div class='info-note'>📌 📌 <b>Cómo obtener el archivo:</b> Abrí PowerShell como administrador → escribí <code>winsat formal</code> → esperá que termine (5-10 min) → buscá el XML en <code>C:\\Windows\\Performance\\WinSAT\\DataStore\\</code>", unsafe_allow_html=True)
+    st.stop()
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""<div class='comp-card'>
@@ -237,24 +223,27 @@ if uploaded is None:
     st.stop()
 
 # ── Parse ─────────────────────────────────────────────────────────────────────
-with st.spinner("Leyendo archivo WinSAT..."):
-    try:
-        content = uploaded.read()
-        data = parse_winsat_xml(content)
-    except Exception as e:
-        st.error(f"Error al leer el archivo: {e}")
-        st.stop()
+try:
+    content = uploaded.read()
+    data = parse_winsat_xml(content)
+except Exception as e:
+    st.error(f"Error al leer el archivo: {e}")
+    st.stop()
 
-# Override con manual si el usuario lo especificó
-if cpu_manual != "— Autodetectar —":
-    data["cpu_name_override"] = cpu_manual
-if gpu_manual != "— Autodetectar —":
-    data["gpu_name_override"] = gpu_manual
+if cpu_manual != "— Autodetectar —": data["cpu_name_override"] = cpu_manual
+if gpu_manual != "— Autodetectar —": data["gpu_name_override"] = gpu_manual
 
-# ── ML Analysis ──────────────────────────────────────────────────────────────
-with st.spinner("Analizando con Machine Learning..."):
-    analysis = ml.analyze(data, uso, resolucion)
-    fps_data  = fps_predictor.predict(analysis, resolucion)
+analysis = ml.analyze(data, uso, resolucion)
+fps_data = fps_predictor.predict(analysis, resolucion)
+# PREPARAMOS LAS VARIABLES DEL RADAR JUSTO DESPUÉS DEL ANÁLISIS
+radar_labels = ["CPU Multi", "CPU Single", "RAM", "GPU", "NVMe", "Disk 2"]
+radar_vals = [
+    analysis["scores"].get("cpu", 0) / 9.9 * 100,
+    analysis["scores"].get("cpu_single", 0) / 9.9 * 100,
+    analysis["scores"].get("ram", 0) / 9.9 * 100,
+    analysis["scores"].get("gpu", 0) / 9.9 * 100,
+    analysis["scores"].get("disk", 0) / 9.9 * 100,
+    analysis["scores"].get("disk2", 1.0) / 9.9 * 100,
 
 # ── HERO: Score general ───────────────────────────────────────────────────────
 tier_colors = {
@@ -270,30 +259,23 @@ tier_icon, tier_bg, tier_color = tier_colors.get(tier, ("⚪", "#1f2937", "#9ca3
 col_score, col_info = st.columns([1, 2])
 with col_score:
     overall = analysis["overall_score"]
-    percentile = analysis["global_percentile"]
     st.markdown(f"""
-    <div style='background:#1a1d2e;border:1px solid #2a2d3e;border-radius:16px;padding:1.5rem;text-align:center;'>
-        <div style='font-size:0.75rem;color:#6b7280;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:8px;'>Puntaje General</div>
+    <div class='hero-card' style='text-align:center;'>
+        <div class='score-label'>Puntaje General</div>
         <div class='score-big'>{overall:.1f}</div>
-        <div class='score-label'>de 9.9 máximo</div>
-        <div style='display:inline-block;padding:4px 14px;border-radius:20px;font-size:0.78rem;font-weight:500;margin-top:10px;background:{tier_bg};color:{tier_color};'>
-            {tier_icon} Gama {tier}
-        </div>
-        <div style='margin-top:12px;font-size:0.85rem;color:#9ca3af;'>Top <b style="color:#e5e7eb;">{percentile}%</b> global</div>
+        <div class='score-label'>Gama {analysis['tier']}</div>
     </div>
     """, unsafe_allow_html=True)
 
 with col_info:
-    spr = data.get("spr", {})
     st.markdown(f"""
-    <div style='background:#1a1d2e;border:1px solid #2a2d3e;border-radius:16px;padding:1.5rem;height:100%;'>
+    <div class='hero-card' style='height:100%;'>
         <div style='font-size:0.9rem;color:#e5e7eb;font-weight:500;margin-bottom:0.8rem;'>Resumen del sistema</div>
         <div style='font-size:0.85rem;color:#9ca3af;line-height:1.8;'>
             🖥️ <b style='color:#e5e7eb;'>CPU:</b> {analysis.get("cpu_display","Detectado")}<br>
             🎮 <b style='color:#e5e7eb;'>GPU:</b> {analysis.get("gpu_display","Detectado")}<br>
             🧠 <b style='color:#e5e7eb;'>RAM:</b> {analysis.get("ram_display","—")}<br>
-            💾 <b style='color:#e5e7eb;'>Disco principal:</b> {analysis.get("disk_display","—")}<br>
-            🪟 <b style='color:#e5e7eb;'>Sistema:</b> {data.get("os_name","Windows")}<br>
+            💾 <b style='color:#e5e7eb;'>Disco:</b> {analysis.get("disk_display","—")}
             🔩 <b style='color:#e5e7eb;'>Placa:</b> {data.get("motherboard","—")}
         </div>
     </div>
@@ -336,7 +318,7 @@ fig_radar.add_trace(go.Scatterpolar(
     fill='toself',
     fillcolor='rgba(0, 240, 255, 0.15)',
     line=dict(color='#00f0ff', width=2),
-    name='Tu PC',
+    name='Tu PC'
     marker=dict(size=6, color='#00f0ff')
 ))
 fig_radar.add_trace(go.Scatterpolar(
