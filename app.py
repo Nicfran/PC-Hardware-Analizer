@@ -318,7 +318,7 @@ fig_radar.add_trace(go.Scatterpolar(
     fill='toself',
     fillcolor='rgba(0, 240, 255, 0.15)',
     line=dict(color='#00f0ff', width=2),
-    name='Tu PC'
+    name='Tu PC',
     marker=dict(size=6, color='#00f0ff')
 ))
 fig_radar.add_trace(go.Scatterpolar(
