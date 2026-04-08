@@ -232,9 +232,10 @@ except Exception as e:
 
 if cpu_manual != "— Autodetectar —": data["cpu_name_override"] = cpu_manual
 if gpu_manual != "— Autodetectar —": data["gpu_name_override"] = gpu_manual
-
-analysis = ml.analyze(data, uso, resolucion)
-fps_data = fps_predictor.predict(analysis, resolucion)
+    
+with st.spinner("🚀 INICIALIZANDO ESCANEO DE HARDWARE..."):
+    analysis = ml.analyze(data, uso, resolucion)
+    fps_data = fps_predictor.predict(analysis, resolucion)
 # PREPARAMOS LAS VARIABLES DEL RADAR JUSTO DESPUÉS DEL ANÁLISIS
 radar_labels = ["CPU Multi", "CPU Single", "RAM", "GPU", "NVMe", "Disk 2"]
 radar_vals = [
